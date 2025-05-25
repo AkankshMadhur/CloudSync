@@ -9,6 +9,10 @@ import ForgotPassword from "./authentication/ForgotPassword"
 import UpdateProfile from "./authentication/UpdateProfile"
 import Dashboard from "./google-drive/Dashboard"
 
+// ✅ Add these lines
+import { ToastContainer } from "react-toastify"
+import "react-toastify/dist/ReactToastify.css"
+
 function App() {
   return (
     <Router>
@@ -27,6 +31,9 @@ function App() {
           <Route path="/login" component={Login} />
           <Route path="/forgot-password" component={ForgotPassword} />
         </Switch>
+
+        {/* ✅ Toast Container goes here (outside Switch, inside AuthProvider) */}
+        <ToastContainer position="top-right" autoClose={3000} />
       </AuthProvider>
     </Router>
   )
