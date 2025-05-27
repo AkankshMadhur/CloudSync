@@ -2,6 +2,8 @@ import React, { useRef, useState } from "react";
 import { Form, Button, Card, Alert, Container } from "react-bootstrap";
 import { useAuth } from "../../contexts/AuthContext";
 import { Link, useHistory } from "react-router-dom";
+import { toast } from "react-toastify"
+
 
 export default function Login() {
   const emailRef = useRef();
@@ -13,18 +15,22 @@ export default function Login() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-
+  
     try {
       setError("");
       setLoading(true);
       await login(emailRef.current.value, passwordRef.current.value);
+  
+      toast.success("Logged in successfully!"); // ✅ Toast on success
       history.push("/");
     } catch {
       setError("Failed to log in");
+      toast.error("Login failed. Please check your credentials."); // ✅ Toast on failure
     }
-
+  
     setLoading(false);
   }
+  
 
   return (
     <Container

@@ -3,6 +3,7 @@ import { Form, Button, Card, Alert } from "react-bootstrap"
 import { useAuth } from "../../contexts/AuthContext"
 import { Link, useHistory } from "react-router-dom"
 import CenteredContainer from "./CenteredContainer"
+import { toast } from "react-toastify"
 
 export default function Signup() {
   const emailRef = useRef()
@@ -15,22 +16,33 @@ export default function Signup() {
 
   async function handleSubmit(e) {
     e.preventDefault()
-
+  
     if (passwordRef.current.value !== passwordConfirmRef.current.value) {
-      return setError("Passwords do not match")
+      setError("Passwords do not match")
+      toast.error("Passwords do not match")
+      return
     }
-
+  
+    if (passwordRef.current.value.length < 6) {
+      setError("Password must be at least 6 characters")
+      toast.error("Password must be at least 6 characters")
+      return
+    }
+  
     try {
       setError("")
       setLoading(true)
       await signup(emailRef.current.value, passwordRef.current.value)
+      toast.success("Account created successfully!")
       history.push("/")
-    } catch {
+    } catch (err) {
       setError("Failed to create an account")
+      toast.error("Signup failed. Try again.")
     }
-
+  
     setLoading(false)
   }
+  
 
   return (
     <CenteredContainer>
