@@ -8,34 +8,34 @@ import PrivateRoute from "./authentication/PrivateRoute"
 import ForgotPassword from "./authentication/ForgotPassword"
 import UpdateProfile from "./authentication/UpdateProfile"
 import Dashboard from "./google-drive/Dashboard"
-
-// ✅ Add these lines
 import { ToastContainer } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 
+// ✅ Import the CSS you just made
+import "./App.css"
+
 function App() {
   return (
-    <Router>
-      <AuthProvider>
-        <Switch>
-          {/* Drive */}
-          <PrivateRoute exact path="/" component={Dashboard} />
-          <PrivateRoute exact path="/folder/:folderId" component={Dashboard} />
+    // ✅ Wrap your app in a div with the background class
+    <div className="app-background">
+      <Router>
+        <AuthProvider>
+          <Switch>
+            <PrivateRoute exact path="/" component={Dashboard} />
+            <PrivateRoute exact path="/folder/:folderId" component={Dashboard} />
 
-          {/* Profile */}
-          <PrivateRoute path="/user" component={Profile} />
-          <PrivateRoute path="/update-profile" component={UpdateProfile} />
+            <PrivateRoute path="/user" component={Profile} />
+            <PrivateRoute path="/update-profile" component={UpdateProfile} />
 
-          {/* Auth */}
-          <Route path="/signup" component={Signup} />
-          <Route path="/login" component={Login} />
-          <Route path="/forgot-password" component={ForgotPassword} />
-        </Switch>
+            <Route path="/signup" component={Signup} />
+            <Route path="/login" component={Login} />
+            <Route path="/forgot-password" component={ForgotPassword} />
+          </Switch>
 
-        {/* ✅ Toast Container goes here (outside Switch, inside AuthProvider) */}
-        <ToastContainer position="top-right" autoClose={3000} />
-      </AuthProvider>
-    </Router>
+          <ToastContainer position="top-right" autoClose={3000} />
+        </AuthProvider>
+      </Router>
+    </div>
   )
 }
 

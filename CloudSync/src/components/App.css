@@ -1,0 +1,9 @@
+/* src/App.css */
+.app-background {
+  background-image: url('/background.jpg'); /* ✅ points to public folder */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 100vh;
+}
+  

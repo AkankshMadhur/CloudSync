@@ -13,6 +13,9 @@ const app = firebase.initializeApp({
 })
 
 const firestore = app.firestore()
+
+export const db = firestore  // <--- Add this export
+
 export const database = {
   folders: firestore.collection("folders"),
   files: firestore.collection("files"),
@@ -21,6 +24,8 @@ export const database = {
   },
   getCurrentTimestamp: firebase.firestore.FieldValue.serverTimestamp,
 }
+
 export const storage = app.storage()
 export const auth = app.auth()
+
 export default app

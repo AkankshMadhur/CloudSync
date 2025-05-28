@@ -1,27 +1,39 @@
 import React from "react"
-import { Navbar, Nav } from "react-bootstrap"
-import { Link } from "react-router-dom"
+import {
+  Box,
+  Flex,
+  Link as ChakraLink,
+  Spacer,
+  Text,
+  Button,
+} from "@chakra-ui/react"
+import { Link as RouterLink } from "react-router-dom"
 
 export default function NavbarComponent() {
   return (
-    <Navbar bg="light" expand="sm" className="shadow-sm px-3">
-      <Navbar.Brand
-        as={Link}
-        to="/"
-        style={{
-          color: "#007bff",
-          fontSize: "1.8rem",
-          fontWeight: "bold",
-          letterSpacing: "1px"
-        }}
-      >
-        CloudSync
-      </Navbar.Brand>
-      <Nav className="ms-auto">
-        <Nav.Link as={Link} to="/user">
+    <Box bg="gray.100" px={4} py={2} shadow="sm">
+      <Flex align="center">
+        <ChakraLink
+          as={RouterLink}
+          to="/"
+          fontSize="xl"
+          fontWeight="bold"
+          color="blue.500"
+          letterSpacing="wide"
+        >
+          CloudSync
+        </ChakraLink>
+        <Spacer />
+        <Button
+          as={RouterLink}
+          to="/user"
+          variant="ghost"
+          size="sm"
+          colorScheme="blue"
+        >
           Profile
-        </Nav.Link>
-      </Nav>
-    </Navbar>
+        </Button>
+      </Flex>
+    </Box>
   )
 }

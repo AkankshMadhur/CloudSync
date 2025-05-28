@@ -1,64 +1,120 @@
-import { faFile, faEllipsisV } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React from "react";
-import { Dropdown } from "react-bootstrap";
-import { toast } from "react-toastify";
-import { DeleteFile } from "./DeleteFile";
+import React from "react"
+import {
+  Box,
+  Flex,
+  Icon,
+  Image,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+  Text,
+  Link,
+  IconButton,
+  useToast,
+} from "@chakra-ui/react"
+import { FaFile, FaEllipsisV } from "react-icons/fa"
+import { DeleteFile } from "./DeleteFile"
 
 export default function File({ file }) {
-  async function handleDelete() {
+  const toast = useToast()
+
+  const handleDelete = async () => {
     if (window.confirm(`Delete "${file.name}"?`)) {
       try {
-        await DeleteFile(file);
-        toast.success("File deleted!");
+        await DeleteFile(file)
+        toast({
+          title: "File deleted!",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        })
       } catch (error) {
-        toast.error("Failed to delete.");
-        console.error(error);
+        toast({
+          title: "Failed to delete.",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        })
+        console.error(error)
       }
     }
   }
 
-  function handleProperties() {
-    toast.info(
-      `Name: ${file.name}\nCreated: ${
-        file.createdAt?.toDate?.().toLocaleString?.() || "N/A"
-      }`
-    );
+  const handleProperties = () => {
+    toast({
+      title: "File Info",
+      description: `Name: ${file.name}
+Created: ${file.createdAt?.toDate?.().toLocaleString?.() || "N/A"}
+Size: ${formatSize(file.size)}`,
+      status: "info",
+      duration: 5000,
+      isClosable: true,
+    })
   }
 
+  const formatSize = (bytes) => {
+    if (!bytes) return "Unknown size"
+    const kb = bytes / 1024
+    return kb > 1024 ? (kb / 1024).toFixed(2) + " MB" : kb.toFixed(2) + " KB"
+  }
+
+  const isImage = file.type && file.type.startsWith("image/")
+
   return (
-    <div
-      className="d-flex justify-content-between align-items-center bg-light border rounded px-3 py-2 mb-3 shadow-sm"
-      style={{ maxWidth: "500px" }}
+    <Flex
+      align="center"
+      justify="space-between"
+      bg="gray.50"
+      border="1px"
+      borderColor="gray.200"
+      borderRadius="md"
+      p={3}
+      shadow="sm"
+      maxW="500px"
+      mb={3}
     >
-      <div className="d-flex align-items-center text-truncate" style={{ gap: "0.5rem" }}>
-        <FontAwesomeIcon icon={faFile} className="text-secondary" />
-        <a
+      <Flex align="center" gap={2} overflow="hidden">
+        {isImage ? (
+          <Image
+            src={file.url}
+            alt={file.name}
+            boxSize="40px"
+            objectFit="cover"
+            borderRadius="md"
+          />
+        ) : (
+          <Icon as={FaFile} boxSize={5} color="gray.500" />
+        )}
+        <Link
           href={file.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-truncate text-decoration-none text-dark"
+          isExternal
+          color="blue.700"
+          fontWeight="medium"
+          textDecoration="none"
+          overflow="hidden"
+          whiteSpace="nowrap"
+          textOverflow="ellipsis"
+          maxW="200px"
         >
           {file.name}
-        </a>
-      </div>
+        </Link>
+      </Flex>
 
-      <Dropdown align="end">
-        <Dropdown.Toggle
-          variant="light"
-          className="btn-sm border-0 shadow-none"
-          style={{ backgroundColor: "transparent" }}
-        >
-          <FontAwesomeIcon icon={faEllipsisV} />
-        </Dropdown.Toggle>
-
-        <Dropdown.Menu>
-          <Dropdown.Item onClick={handleProperties}>View Properties</Dropdown.Item>
-          <Dropdown.Item onClick={handleDelete} className="text-danger">
+      <Menu>
+        <MenuButton
+          as={IconButton}
+          icon={<FaEllipsisV />}
+          variant="ghost"
+          size="sm"
+        />
+        <MenuList>
+          <MenuItem onClick={handleProperties}>View Properties</MenuItem>
+          <MenuItem onClick={handleDelete} color="red.500">
             Delete
-          </Dropdown.Item>
-        </Dropdown.Menu>
-      </Dropdown>
-    </div>
-  );
+          </MenuItem>
+        </MenuList>
+      </Menu>
+    </Flex>
+  )
 }
