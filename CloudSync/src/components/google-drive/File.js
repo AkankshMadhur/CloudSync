@@ -1,4 +1,5 @@
 import React from "react"
+import { FaFile, FaEllipsisV, FaFilePdf, FaFileVideo } from "react-icons/fa"
 import {
   Box,
   Flex,
@@ -8,18 +9,19 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
-  Text,
   Link,
   IconButton,
   useToast,
+  useColorModeValue,
 } from "@chakra-ui/react"
-import { FaFile, FaEllipsisV } from "react-icons/fa"
 import { DeleteFile } from "./DeleteFile"
 import { database } from "../../firebase"
 
-
 export default function File({ file }) {
   const toast = useToast()
+
+  // Icon color adapts to light/dark mode
+  const fileIconColor = useColorModeValue("gray.500", "gray.300")
 
   const handleDelete = async () => {
     if (window.confirm(`Delete "${file.name}"?`)) {
@@ -61,14 +63,16 @@ Size: ${formatSize(file.size)}`,
     return kb > 1024 ? (kb / 1024).toFixed(2) + " MB" : kb.toFixed(2) + " KB"
   }
 
+  // File type checks
   const isImage = file.type && file.type.startsWith("image/")
+  const isPdf = file.type === "application/pdf"
+  const isVideo = file.type && file.type.startsWith("video/")
 
   const handleRename = async () => {
     const newName = window.prompt("Enter new file name:", file.name)
     if (!newName || newName.trim() === "" || newName === file.name) {
-      return // No change or empty input, do nothing
+      return // no change or empty input
     }
-
     try {
       await database.files.doc(file.id).update({ name: newName.trim() })
       toast({
@@ -93,9 +97,9 @@ Size: ${formatSize(file.size)}`,
     <Flex
       align="center"
       justify="space-between"
-      bg="gray.50"
+      bg={useColorModeValue("gray.50", "gray.700")}
       border="1px"
-      borderColor="gray.200"
+      borderColor={useColorModeValue("gray.200", "gray.600")}
       borderRadius="md"
       p={3}
       shadow="sm"
@@ -111,13 +115,18 @@ Size: ${formatSize(file.size)}`,
             objectFit="cover"
             borderRadius="md"
           />
+        ) : isPdf ? (
+          <Icon as={FaFilePdf} boxSize={6} color={fileIconColor} />
+        ) : isVideo ? (
+          <Icon as={FaFileVideo} boxSize={6} color={fileIconColor} />
         ) : (
-          <Icon as={FaFile} boxSize={5} color="gray.500" />
+          <Icon as={FaFile} boxSize={5} color={fileIconColor} />
         )}
+
         <Link
           href={file.url}
           isExternal
-          color="blue.700"
+          color={useColorModeValue("blue.700", "blue.300")}
           fontWeight="medium"
           textDecoration="none"
           overflow="hidden"

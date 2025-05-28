@@ -19,6 +19,16 @@ export function AuthProvider({ children }) {
     return auth.signInWithEmailAndPassword(email, password)
   }
 
+  function updateProfileName(displayName) {
+    if (!auth.currentUser) throw new Error("No user logged in")
+    return auth.currentUser.updateProfile({ displayName })
+  }
+  
+  function updateProfilePicture(photoURL) {
+    if (!auth.currentUser) throw new Error("No user logged in")
+    return auth.currentUser.updateProfile({ photoURL })
+  }
+
   function logout() {
     return auth.signOut()
   }
@@ -51,9 +61,11 @@ export function AuthProvider({ children }) {
     logout,
     resetPassword,
     updateEmail,
-    updatePassword
+    updatePassword,
+    updateProfileName,
+    updateProfilePicture,
   }
-
+  
   return (
     <AuthContext.Provider value={value}>
       {!loading && children}

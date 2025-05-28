@@ -10,12 +10,18 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
+  useColorModeValue,
 } from "@chakra-ui/react"
 import { FaFolder, FaEllipsisV, FaTrash } from "react-icons/fa"
 import { DeleteFolder } from "./DeleteFolder"
 
 export default function Folder({ folder }) {
   const toast = useToast()
+
+  // Colors switch based on color mode
+  const bg = useColorModeValue("gray.50", "gray.700")
+  const hoverBg = useColorModeValue("gray.100", "gray.600")
+  const folderIconColor = useColorModeValue("#3182CE", "#63B3ED") // lighter blue for dark mode
 
   const handleDelete = async () => {
     if (window.confirm(`Delete folder "${folder.name}" and all its contents?`)) {
@@ -46,9 +52,9 @@ export default function Folder({ folder }) {
       borderWidth="1px"
       borderRadius="md"
       p={3}
-      bg="gray.50"
+      bg={bg}
       boxShadow="md"
-      _hover={{ bg: "gray.100" }}
+      _hover={{ bg: hoverBg }}
     >
       <Link
         to={{
@@ -57,7 +63,7 @@ export default function Folder({ folder }) {
         }}
       >
         <Flex align="center" gap="2">
-          <FaFolder color="#3182CE" />
+          <FaFolder color={folderIconColor} />
           <Text fontWeight="medium" isTruncated>
             {folder.name}
           </Text>

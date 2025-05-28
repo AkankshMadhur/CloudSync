@@ -1,3 +1,4 @@
+// src/components/google-drive/Navbar.js
 import React from "react"
 import {
   Box,
@@ -9,13 +10,14 @@ import {
   IconButton,
   Tooltip,
   HStack,
-  Text,
 } from "@chakra-ui/react"
-import { Link as RouterLink } from "react-router-dom"
+import { Link as RouterLink, useHistory } from "react-router-dom"
 import { FaMoon, FaSun } from "react-icons/fa"
+import { ArrowBackIcon, ArrowForwardIcon } from "@chakra-ui/icons"
 
-export default function NavbarComponent() {
+export default function Navbar() {
   const { colorMode, toggleColorMode } = useColorMode()
+  const history = useHistory()
 
   return (
     <Box
@@ -30,7 +32,6 @@ export default function NavbarComponent() {
       zIndex={1000}
     >
       <Flex align="center">
-        {/* App Logo/Name */}
         <ChakraLink
           as={RouterLink}
           to="/"
@@ -44,11 +45,29 @@ export default function NavbarComponent() {
 
         <Spacer />
 
-        <HStack spacing={3}>
-          {/* Upload status indicator could go here */}
-          {/* <UploadIndicator uploading={true} /> */}
+        <HStack spacing={2}>
+          <Tooltip label="Back">
+            <IconButton
+              icon={<ArrowBackIcon />}
+              onClick={() => history.goBack()}
+              aria-label="Go back"
+              variant="ghost"
+              size="sm"
+              colorScheme="teal"
+            />
+          </Tooltip>
 
-          {/* Profile link */}
+          <Tooltip label="Forward">
+            <IconButton
+              icon={<ArrowForwardIcon />}
+              onClick={() => history.goForward()}
+              aria-label="Go forward"
+              variant="ghost"
+              size="sm"
+              colorScheme="teal"
+            />
+          </Tooltip>
+
           <Button
             as={RouterLink}
             to="/user"
@@ -59,7 +78,6 @@ export default function NavbarComponent() {
             Profile
           </Button>
 
-          {/* Dark mode toggle */}
           <Tooltip label={`Switch to ${colorMode === "light" ? "dark" : "light"} mode`}>
             <IconButton
               aria-label="Toggle dark mode"

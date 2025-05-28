@@ -16,7 +16,7 @@ import AddFolderButton from "./AddFolderButton"
 import AddFileButton from "./AddFileButton"
 import Folder from "./Folder"
 import File from "./File"
-import Navbar from "./Navbar"
+// Removed import Navbar from "./Navbar"
 import FolderBreadcrumbs from "./FolderBreadcrumbs"
 
 const SORT_OPTIONS = {
@@ -57,64 +57,56 @@ export default function Dashboard() {
   )
 
   return (
-    <>
-      <Navbar />
-      <ChakraContainer maxW="container.xl" py={4}>
-        {/* Header: Breadcrumbs and Buttons + Sort */}
-        <Flex
-          justify="space-between"
-          align="center"
-          wrap="wrap"
-          mb={6}
-          gap={4}
+    <ChakraContainer maxW="container.xl" py={4}>
+      {/* Header: Breadcrumbs and Buttons + Sort */}
+      <Flex justify="space-between" align="center" wrap="wrap" mb={6} gap={4}>
+        {/* Left Side */}
+        <HStack spacing={4} flexWrap="wrap">
+          <FolderBreadcrumbs currentFolder={folder} />
+          <AddFileButton currentFolder={folder} />
+          <AddFolderButton currentFolder={folder} />
+        </HStack>
+
+        {/* Right Side */}
+        <Select
+          size="sm"
+          maxW="200px"
+          value={sortOption}
+          onChange={(e) => setSortOption(e.target.value)}
+          placeholder="Sort"
         >
-          {/* Left Side */}
-          <HStack spacing={4} flexWrap="wrap">
-            <FolderBreadcrumbs currentFolder={folder} />
-            <AddFileButton currentFolder={folder} />
-            <AddFolderButton currentFolder={folder} />
-          </HStack>
+          {Object.entries(SORT_OPTIONS).map(([key, option]) => (
+            <option key={key} value={key}>
+              {option.label}
+            </option>
+          ))}
+        </Select>
+      </Flex>
 
-          {/* Right Side */}
-          <Select
-            size="sm"
-            maxW="200px"
-            value={sortOption}
-            onChange={(e) => setSortOption(e.target.value)}
-            placeholder="Sort"
-          >
-            {Object.entries(SORT_OPTIONS).map(([key, option]) => (
-              <option key={key} value={key}>
-                {option.label}
-              </option>
-            ))}
-          </Select>
+      {/* Folders */}
+      {childFolders.length > 0 && (
+        <Flex wrap="wrap" gap={4} mb={4}>
+          {childFolders.map((childFolder) => (
+            <Box key={childFolder.id} maxW="250px">
+              <Folder folder={childFolder} />
+            </Box>
+          ))}
         </Flex>
+      )}
 
-        {/* Folders */}
-        {childFolders.length > 0 && (
-          <Flex wrap="wrap" gap={4} mb={4}>
-            {childFolders.map((childFolder) => (
-              <Box key={childFolder.id} maxW="250px">
-                <Folder folder={childFolder} />
-              </Box>
-            ))}
-          </Flex>
-        )}
+      {childFolders.length > 0 && childFiles.length > 0 && <Divider my={4} />}
 
-        {childFolders.length > 0 && childFiles.length > 0 && <Divider my={4} />}
-
-        {/* Files */}
-        {sortedFiles.length > 0 && (
-          <Flex wrap="wrap" gap={4}>
-            {sortedFiles.map((childFile) => (
-              <Box key={childFile.id} maxW="250px">
-                <File file={childFile} />
-              </Box>
-            ))}
-          </Flex>
-        )}
-      </ChakraContainer>
-    </>
+      {/* Files */}
+      {sortedFiles.length > 0 && (
+        <Flex wrap="wrap" gap={4}>
+          {sortedFiles.map((childFile) => (
+            <Box key={childFile.id} maxW="250px">
+              <File file={childFile} />
+            </Box>
+          ))}
+        </Flex>
+      )}
+    </ChakraContainer>
   )
 }
+ 
