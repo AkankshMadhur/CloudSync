@@ -19,6 +19,7 @@ import AddFileButton from "./AddFileButton"
 import Folder from "./Folder"
 import File from "./File"
 import FolderBreadcrumbs from "./FolderBreadcrumbs"
+import GeminiAssistant from "../GeminiAssistant"
 
 const SORT_OPTIONS = {
   NAME_ASC: {
@@ -65,89 +66,93 @@ export default function Dashboard({ searchQuery = "" }) {
     .sort(SORT_OPTIONS[sortOption]?.compare || (() => 0))
 
   return (
-    // Use maxW="100%" so container can stretch full width
-    <ChakraContainer maxW="100%" py={4} px={6}>
-      {/* Top bar */}
-      <Flex justify="space-between" align="center" wrap="wrap" mb={6} gap={4}>
-        <HStack spacing={4} flexWrap="wrap">
-          <FolderBreadcrumbs currentFolder={folder} />
-          <AddFileButton currentFolder={folder} />
-          <AddFolderButton currentFolder={folder} />
-        </HStack>
+    <>
+      <ChakraContainer maxW="100%" py={4} px={6}>
+        {/* Top bar */}
+        <Flex justify="space-between" align="center" wrap="wrap" mb={6} gap={4}>
+          <HStack spacing={4} flexWrap="wrap">
+            <FolderBreadcrumbs currentFolder={folder} />
+            <AddFileButton currentFolder={folder} />
+            <AddFolderButton currentFolder={folder} />
+          </HStack>
 
-        <HStack spacing={2}>
-          <Select
-            size="sm"
-            maxW="200px"
-            value={sortOption}
-            onChange={(e) => setSortOption(e.target.value)}
-            placeholder="Sort"
-          >
-            {Object.entries(SORT_OPTIONS).map(([key, option]) => (
-              <option key={key} value={key}>
-                {option.label}
-              </option>
-            ))}
-          </Select>
-
-          <Tooltip label="Toggle View">
-            <IconButton
-              aria-label="Toggle View"
-              icon={view === "list" ? <FaThLarge /> : <FaThList />}
+          <HStack spacing={2}>
+            <Select
               size="sm"
-              onClick={() => setView(view === "list" ? "grid" : "list")}
-            />
-          </Tooltip>
-        </HStack>
-      </Flex>
-
-      {/* Folders */}
-      {filteredFolders.length > 0 && (
-        <Flex wrap="wrap" gap={4} mb={4}>
-          {filteredFolders.map((childFolder) => (
-            <Box key={childFolder.id} maxW="250px">
-              <Folder folder={childFolder} />
-            </Box>
-          ))}
-        </Flex>
-      )}
-
-      {filteredFolders.length > 0 && sortedFiles.length > 0 && <Divider my={4} />}
-
-      {/* Files */}
-      {sortedFiles.length > 0 && (
-        view === "grid" ? (
-          <SimpleGrid columns={[2, 3, 5]} spacing={4}>
-            {sortedFiles.map((childFile) => (
-              <File key={childFile.id} file={childFile} view="grid" />
-            ))}
-          </SimpleGrid>
-        ) : (
-          <>
-            {/* List View Header */}
-            <Box
-              px={3}
-              py={1}
-              fontWeight="semibold"
-              color="gray.500"
-              display="flex"
-              width="100%"  // Add this
+              maxW="200px"
+              value={sortOption}
+              onChange={(e) => setSortOption(e.target.value)}
+              placeholder="Sort"
             >
-              <Box flex="2">Name</Box>
-              <Box flex="1">Last Modified</Box>
-              <Box flex="1">Size</Box>
-              <Box w="40px" /> {/* For 3-dot menu */}
-            </Box>
-
-            {/* Add width="100%" here */}
-            <Flex direction="column" gap={3} width="100%">
-              {sortedFiles.map((childFile) => (
-                <File key={childFile.id} file={childFile} view="list" />
+              {Object.entries(SORT_OPTIONS).map(([key, option]) => (
+                <option key={key} value={key}>
+                  {option.label}
+                </option>
               ))}
-            </Flex>
-          </>
-        )
-      )}
-    </ChakraContainer>
+            </Select>
+
+            <Tooltip label="Toggle View">
+              <IconButton
+                aria-label="Toggle View"
+                icon={view === "list" ? <FaThLarge /> : <FaThList />}
+                size="sm"
+                onClick={() => setView(view === "list" ? "grid" : "list")}
+              />
+            </Tooltip>
+          </HStack>
+        </Flex>
+
+        {/* Folders */}
+        {filteredFolders.length > 0 && (
+          <Flex wrap="wrap" gap={4} mb={4}>
+            {filteredFolders.map((childFolder) => (
+              <Box key={childFolder.id} maxW="250px">
+                <Folder folder={childFolder} />
+              </Box>
+            ))}
+          </Flex>
+        )}
+
+        {filteredFolders.length > 0 && sortedFiles.length > 0 && <Divider my={4} />}
+
+        {/* Files */}
+        {sortedFiles.length > 0 && (
+          view === "grid" ? (
+            <SimpleGrid columns={[2, 3, 5]} spacing={4}>
+              {sortedFiles.map((childFile) => (
+                <File key={childFile.id} file={childFile} view="grid" />
+              ))}
+            </SimpleGrid>
+          ) : (
+            <>
+              {/* List View Header */}
+              <Box
+                px={3}
+                py={1}
+                fontWeight="semibold"
+                color="gray.500"
+                display="flex"
+                width="100%"
+              >
+                <Box flex="2">Name</Box>
+                <Box flex="1">Last Modified</Box>
+                <Box flex="1">Size</Box>
+                <Box w="40px" /> {/* For 3-dot menu */}
+              </Box>
+
+              {/* List View Items */}
+              <Flex direction="column" gap={3} width="100%">
+                {sortedFiles.map((childFile) => (
+                  <File key={childFile.id} file={childFile} view="list" />
+                ))}
+              </Flex>
+            </>
+          )
+        )}
+      </ChakraContainer>
+
+      {/* Gemini Assistant floating button & drawer */}
+      <GeminiAssistant />
+    </>
   )
 }
