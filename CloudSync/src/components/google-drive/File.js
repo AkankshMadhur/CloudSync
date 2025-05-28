@@ -1,5 +1,4 @@
 import React from "react"
-import { FaFile, FaEllipsisV, FaFilePdf, FaFileVideo } from "react-icons/fa"
 import {
   Box,
   Flex,
@@ -13,15 +12,28 @@ import {
   IconButton,
   useToast,
   useColorModeValue,
+  Text,
 } from "@chakra-ui/react"
+import {
+  FaFile,
+  FaEllipsisV,
+  FaFilePdf,
+  FaFileVideo,
+} from "react-icons/fa"
 import { DeleteFile } from "./DeleteFile"
 import { database } from "../../firebase"
 
-export default function File({ file }) {
+export default function File({ file, view = "list" }) {
   const toast = useToast()
 
-  // Icon color adapts to light/dark mode
   const fileIconColor = useColorModeValue("gray.500", "gray.300")
+  const bgColor = useColorModeValue("gray.50", "gray.700")
+  const borderColor = useColorModeValue("gray.200", "gray.600")
+  const linkColor = useColorModeValue("blue.700", "blue.300")
+
+  const isImage = file.type?.startsWith("image/")
+  const isPdf = file.type === "application/pdf"
+  const isVideo = file.type?.startsWith("video/")
 
   const handleDelete = async () => {
     if (window.confirm(`Delete "${file.name}"?`)) {
@@ -45,34 +57,9 @@ export default function File({ file }) {
     }
   }
 
-  const handleProperties = () => {
-    toast({
-      title: "File Info",
-      description: `Name: ${file.name}
-Created: ${file.createdAt?.toDate?.().toLocaleString?.() || "N/A"}
-Size: ${formatSize(file.size)}`,
-      status: "info",
-      duration: 5000,
-      isClosable: true,
-    })
-  }
-
-  const formatSize = (bytes) => {
-    if (!bytes) return "Unknown size"
-    const kb = bytes / 1024
-    return kb > 1024 ? (kb / 1024).toFixed(2) + " MB" : kb.toFixed(2) + " KB"
-  }
-
-  // File type checks
-  const isImage = file.type && file.type.startsWith("image/")
-  const isPdf = file.type === "application/pdf"
-  const isVideo = file.type && file.type.startsWith("video/")
-
   const handleRename = async () => {
     const newName = window.prompt("Enter new file name:", file.name)
-    if (!newName || newName.trim() === "" || newName === file.name) {
-      return // no change or empty input
-    }
+    if (!newName || newName.trim() === "" || newName === file.name) return
     try {
       await database.files.doc(file.id).update({ name: newName.trim() })
       toast({
@@ -93,20 +80,138 @@ Size: ${formatSize(file.size)}`,
     }
   }
 
+  const handleProperties = () => {
+    toast({
+      title: "File Info",
+      description: `Name: ${file.name}
+Created: ${file.createdAt?.toDate?.().toLocaleString?.() || "N/A"}
+Size: ${formatSize(file.size)}`,
+      status: "info",
+      duration: 5000,
+      isClosable: true,
+    })
+  }
+
+  const formatSize = (bytes) => {
+    if (!bytes) return "Unknown size"
+    const kb = bytes / 1024
+    return kb > 1024 ? (kb / 1024).toFixed(2) + " MB" : kb.toFixed(2) + " KB"
+  }
+
+  const formatDate = (timestamp) => {
+    return timestamp?.toDate?.().toLocaleDateString?.() || "N/A"
+  }
+
+  if (view === "grid") {
+  return (
+    <Box
+      bg={bgColor}
+      border="1px"
+      borderColor={borderColor}
+      borderRadius="md"
+      shadow="sm"
+      w="220px"
+      overflow="hidden"
+    >
+      {/* Top bar: Icon, name, menu */}
+      <Flex align="center" px={2} py={1} justify="space-between" gap={2}>
+        <Icon
+          as={
+            isPdf ? FaFilePdf :
+            isVideo ? FaFileVideo :
+            isImage ? FaFile :
+            FaFile
+          }
+          boxSize={5}
+          color={fileIconColor}
+        />
+        <Text
+          flex="1"
+          fontSize="sm"
+          fontWeight="medium"
+          color={linkColor}
+          noOfLines={1}
+          textAlign="center"
+        >
+          {file.name}
+        </Text>
+        <Menu>
+          <MenuButton
+            as={IconButton}
+            icon={<FaEllipsisV />}
+            variant="ghost"
+            size="sm"
+          />
+          <MenuList>
+            <MenuItem onClick={handleRename}>Rename</MenuItem>
+            <MenuItem onClick={handleProperties}>View Properties</MenuItem>
+            <MenuItem onClick={handleDelete} color="red.500">
+              Delete
+            </MenuItem>
+          </MenuList>
+        </Menu>
+      </Flex>
+
+      {/* Preview Area */}
+      <Box
+        h="140px"
+        bg="gray.100"
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        overflow="hidden"
+      >
+        <Link href={file.url} isExternal>
+          {isImage ? (
+            <Image
+              src={file.url}
+              alt={file.name}
+              objectFit="cover"
+              h="100%"
+              w="100%"
+            />
+          ) : isVideo ? (
+            <video
+              src={file.url}
+              muted
+              autoPlay
+              loop
+              playsInline
+              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            />
+          ) : isPdf ? (
+            <embed
+              src={`${file.url}#toolbar=0&navpanes=0&scrollbar=0`}
+              type="application/pdf"
+              style={{ width: "100%", height: "100%" }}
+            />
+          ) : (
+            <Icon as={FaFile} boxSize={10} color={fileIconColor} />
+          )}
+        </Link>
+      </Box>
+    </Box>
+  )
+}
+
+
+  // List view
   return (
     <Flex
       align="center"
-      justify="space-between"
-      bg={useColorModeValue("gray.50", "gray.700")}
+      bg={bgColor}
       border="1px"
-      borderColor={useColorModeValue("gray.200", "gray.600")}
+      borderColor={borderColor}
       borderRadius="md"
-      p={3}
+      px={3}
+      py={2}
       shadow="sm"
-      maxW="500px"
-      mb={3}
+      width="100%"
+      minW="0"
+      mb={2}
     >
-      <Flex align="center" gap={2} overflow="hidden">
+      {/* Name & Icon */}
+      <Flex align="center" flex="2" gap={2} minW={0}>
         {isImage ? (
           <Image
             src={file.url}
@@ -126,33 +231,45 @@ Size: ${formatSize(file.size)}`,
         <Link
           href={file.url}
           isExternal
-          color={useColorModeValue("blue.700", "blue.300")}
+          color={linkColor}
           fontWeight="medium"
           textDecoration="none"
-          overflow="hidden"
-          whiteSpace="nowrap"
-          textOverflow="ellipsis"
-          maxW="200px"
+          noOfLines={1}
+          minW={0}
+          flex="1"
         >
           {file.name}
         </Link>
       </Flex>
 
-      <Menu>
-        <MenuButton
-          as={IconButton}
-          icon={<FaEllipsisV />}
-          variant="ghost"
-          size="sm"
-        />
-        <MenuList>
-          <MenuItem onClick={handleRename}>Rename</MenuItem>
-          <MenuItem onClick={handleProperties}>View Properties</MenuItem>
-          <MenuItem onClick={handleDelete} color="red.500">
-            Delete
-          </MenuItem>
-        </MenuList>
-      </Menu>
+      {/* Modified Date */}
+      <Text flex="1" fontSize="sm" color="gray.500" isTruncated>
+        {formatDate(file.createdAt)}
+      </Text>
+
+      {/* Size */}
+      <Text flex="1" fontSize="sm" color="gray.500" isTruncated>
+        {formatSize(file.size)}
+      </Text>
+
+      {/* Actions */}
+      <Box>
+        <Menu>
+          <MenuButton
+            as={IconButton}
+            icon={<FaEllipsisV />}
+            variant="ghost"
+            size="sm"
+          />
+          <MenuList>
+            <MenuItem onClick={handleRename}>Rename</MenuItem>
+            <MenuItem onClick={handleProperties}>View Properties</MenuItem>
+            <MenuItem onClick={handleDelete} color="red.500">
+              Delete
+            </MenuItem>
+          </MenuList>
+        </Menu>
+      </Box>
     </Flex>
   )
 }
