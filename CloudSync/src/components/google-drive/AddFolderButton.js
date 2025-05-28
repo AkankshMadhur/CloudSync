@@ -1,80 +1,102 @@
-import React, { useState } from "react";
-import { Button, Modal, Form } from "react-bootstrap";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFolderPlus } from "@fortawesome/free-solid-svg-icons";
-import { database } from "../../firebase";
-import { useAuth } from "../../contexts/AuthContext";
-import { ROOT_FOLDER } from "../../hooks/useFolder";
+import React, { useState } from "react"
+import {
+  Button,
+  Icon,
+  useToast,
+  useDisclosure,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  ModalCloseButton,
+  FormControl,
+  FormLabel,
+  Input,
+} from "@chakra-ui/react"
+import { FaFolderPlus } from "react-icons/fa"
+import { database } from "../../firebase"
+import { useAuth } from "../../contexts/AuthContext"
+import { ROOT_FOLDER } from "../../hooks/useFolder"
 
 export default function AddFolderButton({ currentFolder }) {
-  const [open, setOpen] = useState(false);
-  const [name, setName] = useState("");
-  const { currentUser } = useAuth();
+  const { isOpen, onOpen, onClose } = useDisclosure()
+  const [name, setName] = useState("")
+  const { currentUser } = useAuth()
+  const toast = useToast()
 
-  function openModal() {
-    setOpen(true);
-  }
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    if (!currentFolder || name.trim() === "") return
 
-  function closeModal() {
-    setOpen(false);
-  }
-
-  function handleSubmit(e) {
-    e.preventDefault();
-
-    if (currentFolder == null) return;
-
-    const path = [...currentFolder.path];
+    const path = [...currentFolder.path]
     if (currentFolder !== ROOT_FOLDER) {
-      path.push({ name: currentFolder.name, id: currentFolder.id });
+      path.push({ name: currentFolder.name, id: currentFolder.id })
     }
 
     database.folders.add({
-      name: name,
+      name: name.trim(),
       parentId: currentFolder.id,
       userId: currentUser.uid,
       path: path,
       createdAt: database.getCurrentTimestamp(),
-    });
-    setName("");
-    closeModal();
+    })
+
+    toast({
+      title: "Folder created",
+      description: `"${name.trim()}" has been added successfully.`,
+      status: "success",
+      duration: 3000,
+      isClosable: true,
+    })
+
+    setName("")
+    onClose()
   }
 
   return (
     <>
       <Button
-        onClick={openModal}
-        variant="outline-success"
-        size="sm"
-        className="d-flex align-items-center"
+        leftIcon={<Icon as={FaFolderPlus} />}
+        colorScheme="teal"
+        variant="solid"
+        size="md"
+        onClick={onOpen}
+        _hover={{ bg: "teal.600" }}
+        boxShadow="md"
       >
-        <FontAwesomeIcon icon={faFolderPlus} className="me-1" />
         Add Folder
       </Button>
 
-      <Modal show={open} onHide={closeModal}>
-        <Form onSubmit={handleSubmit}>
-          <Modal.Body>
-            <Form.Group>
-              <Form.Label>Folder Name</Form.Label>
-              <Form.Control
-                type="text"
-                required
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
-            </Form.Group>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={closeModal}>
-              Close
-            </Button>
-            <Button variant="success" type="submit">
-              Add Folder
-            </Button>
-          </Modal.Footer>
-        </Form>
+      <Modal isOpen={isOpen} onClose={onClose} isCentered>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Create New Folder</ModalHeader>
+          <ModalCloseButton />
+          <form onSubmit={handleSubmit}>
+            <ModalBody>
+              <FormControl isRequired>
+                <FormLabel>Folder Name</FormLabel>
+                <Input
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Enter folder name"
+                  autoFocus
+                />
+              </FormControl>
+            </ModalBody>
+            <ModalFooter>
+              <Button onClick={onClose} mr={3} variant="ghost">
+                Cancel
+              </Button>
+              <Button type="submit" colorScheme="teal">
+                Create
+              </Button>
+            </ModalFooter>
+          </form>
+        </ModalContent>
       </Modal>
     </>
-  );
+  )
 }

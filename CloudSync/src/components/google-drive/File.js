@@ -15,6 +15,8 @@ import {
 } from "@chakra-ui/react"
 import { FaFile, FaEllipsisV } from "react-icons/fa"
 import { DeleteFile } from "./DeleteFile"
+import { database } from "../../firebase"
+
 
 export default function File({ file }) {
   const toast = useToast()
@@ -60,6 +62,32 @@ Size: ${formatSize(file.size)}`,
   }
 
   const isImage = file.type && file.type.startsWith("image/")
+
+  const handleRename = async () => {
+    const newName = window.prompt("Enter new file name:", file.name)
+    if (!newName || newName.trim() === "" || newName === file.name) {
+      return // No change or empty input, do nothing
+    }
+
+    try {
+      await database.files.doc(file.id).update({ name: newName.trim() })
+      toast({
+        title: "File renamed",
+        description: `Renamed to "${newName.trim()}"`,
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      })
+    } catch (error) {
+      toast({
+        title: "Failed to rename file.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      })
+      console.error(error)
+    }
+  }
 
   return (
     <Flex
@@ -109,6 +137,7 @@ Size: ${formatSize(file.size)}`,
           size="sm"
         />
         <MenuList>
+          <MenuItem onClick={handleRename}>Rename</MenuItem>
           <MenuItem onClick={handleProperties}>View Properties</MenuItem>
           <MenuItem onClick={handleDelete} color="red.500">
             Delete
