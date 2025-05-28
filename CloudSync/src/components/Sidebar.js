@@ -1,66 +1,91 @@
-// src/components/Sidebar.js
+// src/Sidebar.js
 import React from "react"
 import {
   Box,
   VStack,
-  HStack,
   Text,
-  Icon,
   Button,
   Progress,
+  Divider,
   useColorModeValue,
+  Icon,
 } from "@chakra-ui/react"
 import { Link as RouterLink } from "react-router-dom"
-import { MdHome, MdAccessTime, MdStorage } from "react-icons/md"
+import { FaHome, FaClock, FaDatabase } from "react-icons/fa"
 
-export default function Sidebar({ usedStorage = 5, totalStorage = 15 }) {
-  const usagePercentage = (usedStorage / totalStorage) * 100
-  const bgColor = useColorModeValue("gray.100", "gray.800")
+export default function Sidebar({ usedStorage, totalStorage }) {
+  const bg = useColorModeValue("gray.50", "gray.800")
+
+  const storagePercent = (usedStorage / totalStorage) * 100
 
   return (
     <Box
-      w="250px"
-      h="100vh"
-      p={4}
-      bg={bgColor}
+      as="aside"
       position="fixed"
-      left={0}
       top={0}
+      left={0}
+      h="100vh"
+      w="250px"
+      bg={bg}
+      p={4}
       borderRight="1px solid"
       borderColor={useColorModeValue("gray.200", "gray.700")}
     >
       <VStack align="stretch" spacing={6}>
-        {/* Links */}
-        <VStack align="start" spacing={4}>
-          <HStack as={RouterLink} to="/" spacing={3}>
-            <Icon as={MdHome} />
-            <Text fontWeight="medium">Home</Text>
-          </HStack>
+        {/* Logo/Title */}
+        <Text fontSize="2xl" fontWeight="bold" color="teal.500">
+          CloudSync
+        </Text>
 
-          <HStack as={RouterLink} to="/recent" spacing={3}>
-            <Icon as={MdAccessTime} />
-            <Text fontWeight="medium">Recent</Text>
-          </HStack>
+        {/* Navigation */}
+        <VStack align="stretch" spacing={3}>
+          <Button
+            as={RouterLink}
+            to="/"
+            leftIcon={<Icon as={FaHome} />}
+            justifyContent="flex-start"
+            variant="ghost"
+            colorScheme="teal"
+          >
+            Home
+          </Button>
+          <Button
+            as={RouterLink}
+            to="/recent"
+            leftIcon={<Icon as={FaClock} />}
+            justifyContent="flex-start"
+            variant="ghost"
+            colorScheme="teal"
+          >
+            Recent
+          </Button>
+          <Button
+            as={RouterLink}
+            to="/storage"
+            leftIcon={<Icon as={FaDatabase} />}
+            justifyContent="flex-start"
+            variant="ghost"
+            colorScheme="teal"
+          >
+            Storage
+          </Button>
         </VStack>
 
-        {/* Storage */}
-        <Box mt={8}>
-          <HStack spacing={2} mb={2}>
-            <Icon as={MdStorage} />
-            <Text fontWeight="semibold">Storage</Text>
-          </HStack>
-          <Text fontSize="sm" color="gray.500" mb={1}>
+        <Divider />
+
+        {/* Storage Info */}
+        <Box>
+          <Text fontSize="sm" mb={1}>
             {usedStorage} GB of {totalStorage} GB used
           </Text>
           <Progress
-            colorScheme="teal"
+            value={storagePercent}
             size="sm"
-            value={usagePercentage}
-            borderRadius="sm"
-            mb={2}
+            colorScheme="teal"
+            borderRadius="md"
           />
-          <Button size="sm" colorScheme="teal" w="full">
-            Get More Storage
+          <Button mt={2} size="sm" colorScheme="teal" variant="outline" width="100%">
+            Get more storage
           </Button>
         </Box>
       </VStack>

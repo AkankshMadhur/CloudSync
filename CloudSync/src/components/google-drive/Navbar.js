@@ -3,19 +3,20 @@ import React from "react"
 import {
   Box,
   Flex,
-  Link as ChakraLink,
-  Spacer,
-  Button,
-  useColorMode,
+  Input,
   IconButton,
   Tooltip,
   HStack,
+  useColorMode,
+  InputGroup,
+  InputLeftElement,
 } from "@chakra-ui/react"
-import { Link as RouterLink, useHistory } from "react-router-dom"
-import { FaMoon, FaSun } from "react-icons/fa"
+import { FaMoon, FaSun, FaSearch } from "react-icons/fa"
 import { ArrowBackIcon, ArrowForwardIcon } from "@chakra-ui/icons"
+import { useHistory, Link as RouterLink } from "react-router-dom"
+import { Button } from "@chakra-ui/react"
 
-export default function Navbar() {
+export default function Navbar({ searchQuery, setSearchQuery }) {
   const { colorMode, toggleColorMode } = useColorMode()
   const history = useHistory()
 
@@ -31,21 +32,22 @@ export default function Navbar() {
       top={0}
       zIndex={1000}
     >
-      <Flex align="center">
-        <ChakraLink
-          as={RouterLink}
-          to="/"
-          fontSize="xl"
-          fontWeight="bold"
-          color="teal.500"
-          letterSpacing="wide"
-        >
-          CloudSync
-        </ChakraLink>
+      <Flex align="center" gap={4}>
+        {/* Search Bar */}
+        <InputGroup maxW="600px" mx="auto" flex={1}>
+          <InputLeftElement pointerEvents="none" children={<FaSearch color="gray.400" />} />
+          <Input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search in CloudSync"
+            bg={colorMode === "light" ? "white" : "gray.700"}
+            borderRadius="md"
+          />
+        </InputGroup>
 
-        <Spacer />
-
-        <HStack spacing={2}>
+        {/* Right Side Buttons */}
+        <HStack spacing={2} ml="auto">
           <Tooltip label="Back">
             <IconButton
               icon={<ArrowBackIcon />}

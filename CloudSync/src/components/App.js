@@ -1,5 +1,5 @@
 // src/App.js
-import React from "react"
+
 import Signup from "./authentication/Signup"
 import { AuthProvider } from "../contexts/AuthContext"
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom"
@@ -14,10 +14,13 @@ import "react-toastify/dist/ReactToastify.css"
 import { ChakraProvider, Flex, Box } from "@chakra-ui/react"
 import Sidebar from "./Sidebar"
 import Navbar from "./google-drive/Navbar"
+import React, { useState } from "react"
 
 import "./App.css"
 
 function App() {
+  const [searchQuery, setSearchQuery] = useState("")
+
   return (
     <ChakraProvider>
       <div className="app-background">
@@ -29,15 +32,26 @@ function App() {
               <Route path="/login" component={Login} />
               <Route path="/forgot-password" component={ForgotPassword} />
 
-              {/* Private routes (with sidebar + navbar layout) */}
+              {/* Private layout with sidebar + navbar */}
               <Route path="/">
                 <Flex>
                   <Sidebar usedStorage={5} totalStorage={15} />
                   <Box ml="250px" w="100%">
-                    <Navbar />
+                    {/* Pass search query state to Navbar */}
+                    <Navbar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+
                     <Switch>
-                      <PrivateRoute exact path="/" component={Dashboard} />
-                      <PrivateRoute exact path="/folder/:folderId" component={Dashboard} />
+                      {/* Pass searchQuery via render to Dashboard */}
+                      <PrivateRoute
+                        exact
+                        path="/"
+                        render={(props) => <Dashboard {...props} searchQuery={searchQuery} />}
+                      />
+                      <PrivateRoute
+                        exact
+                        path="/folder/:folderId"
+                        render={(props) => <Dashboard {...props} searchQuery={searchQuery} />}
+                      />
                       <PrivateRoute path="/user" component={Profile} />
                       <PrivateRoute path="/update-profile" component={UpdateProfile} />
                     </Switch>
