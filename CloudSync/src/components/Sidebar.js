@@ -51,16 +51,7 @@ export default function Sidebar({ usedStorage, totalStorage }) {
           >
             Home
           </Button>
-          <Button
-            as={RouterLink}
-            to="/recent"
-            leftIcon={<Icon as={FaClock} />}
-            justifyContent="flex-start"
-            variant="ghost"
-            colorScheme="teal"
-          >
-            Recent
-          </Button>
+          
           <Button
             as={RouterLink}
             to="/storage"

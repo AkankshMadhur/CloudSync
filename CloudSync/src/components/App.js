@@ -16,6 +16,7 @@ import { ChakraProvider, Flex, Box } from "@chakra-ui/react"
 import Sidebar from "./Sidebar"
 import Navbar from "./google-drive/Navbar"
 import PdfSummarizer from "../components/PdfSummarizer"
+import ImageToPdf from "../components/ImageToPdf"
 
 import "./App.css"
 
@@ -66,6 +67,10 @@ function App() {
                       <PrivateRoute
                         path="/summarize"
                         component={PdfSummarizer}
+                      />
+                      <PrivateRoute
+                        path="/image-to-pdf"
+                        component={ImageToPdf}
                       />
                     </Switch>
                   </Box>
