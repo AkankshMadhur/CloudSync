@@ -17,6 +17,7 @@
     "firebase": "^7.24.0",
     "framer-motion": "^4.1.17",
     "pdfjs-dist": "^2.14.305",
+    "qrcode.react": "^4.2.0",
     "react": "^16.13.1",
     "react-bootstrap": "^1.6.8",
     "react-dom": "^16.13.1",

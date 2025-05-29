@@ -15,6 +15,9 @@ import {
   Spinner,
   Button,
   useColorModeValue,
+  Flex,
+  Text,
+  Image,
 } from "@chakra-ui/react";
 import { FaRobot, FaPaperPlane } from "react-icons/fa";
 
@@ -96,7 +99,26 @@ export default function GeminiAssistant() {
       <Drawer placement="right" onClose={onClose} isOpen={isOpen} size="sm">
         <DrawerOverlay />
         <DrawerContent bg={drawerBg}>
-          <DrawerHeader borderBottomWidth="1px">Ask Gemini</DrawerHeader>
+        <DrawerHeader borderBottomWidth="1px">
+  <Flex align="center" gap={3}>
+    <Box
+      bg={useColorModeValue("gray.100", "gray.700")}
+      p={2}
+      borderRadius="md"
+      boxShadow="md"
+    >
+      <Image
+        src="/images/gemini-logo.png" // Make sure this path is correct
+        alt="Gemini Logo"
+        height="30px" // Adjust as needed
+        objectFit="contain"
+      />
+    </Box>
+    <Text fontWeight="bold" fontSize="lg">
+      Ask Gemini
+    </Text>
+  </Flex>
+</DrawerHeader>
 
           <DrawerBody>
             <VStack spacing={4} align="stretch">

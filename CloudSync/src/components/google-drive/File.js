@@ -1,4 +1,5 @@
-import React from "react"
+import React, { useState } from "react"
+import  {QRCodeSVG} from "qrcode.react"
 import {
   Box,
   Flex,
@@ -13,18 +14,30 @@ import {
   useToast,
   useColorModeValue,
   Text,
+  Button,
+  Input,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  useDisclosure,
 } from "@chakra-ui/react"
 import {
   FaFile,
   FaEllipsisV,
   FaFilePdf,
   FaFileVideo,
+  FaShareAlt,
 } from "react-icons/fa"
 import { DeleteFile } from "./DeleteFile"
 import { database } from "../../firebase"
 
 export default function File({ file, view = "list" }) {
   const toast = useToast()
+  const { isOpen, onOpen, onClose } = useDisclosure()
 
   const fileIconColor = useColorModeValue("gray.500", "gray.300")
   const bgColor = useColorModeValue("gray.50", "gray.700")
@@ -92,6 +105,30 @@ Size: ${formatSize(file.size)}`,
     })
   }
 
+  const handleShareModal = () => {
+    onOpen()
+  }
+
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(file.url)
+      toast({
+        title: "Link copied!",
+        description: "File link copied to clipboard.",
+        status: "info",
+        duration: 3000,
+        isClosable: true,
+      })
+    } catch (error) {
+      toast({
+        title: "Copy failed",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      })
+    }
+  }
+
   const formatSize = (bytes) => {
     if (!bytes) return "Unknown size"
     const kb = bytes / 1024
@@ -102,100 +139,119 @@ Size: ${formatSize(file.size)}`,
     return timestamp?.toDate?.().toLocaleDateString?.() || "N/A"
   }
 
-  if (view === "grid") {
-  return (
-    <Box
-      bg={bgColor}
-      border="1px"
-      borderColor={borderColor}
-      borderRadius="md"
-      shadow="sm"
-      w="220px"
-      overflow="hidden"
-    >
-      {/* Top bar: Icon, name, menu */}
-      <Flex align="center" px={2} py={1} justify="space-between" gap={2}>
-        <Icon
-          as={
-            isPdf ? FaFilePdf :
-            isVideo ? FaFileVideo :
-            isImage ? FaFile :
-            FaFile
-          }
-          boxSize={5}
-          color={fileIconColor}
-        />
-        <Text
-          flex="1"
-          fontSize="sm"
-          fontWeight="medium"
-          color={linkColor}
-          noOfLines={1}
-          textAlign="center"
-        >
-          {file.name}
-        </Text>
-        <Menu>
-          <MenuButton
-            as={IconButton}
-            icon={<FaEllipsisV />}
-            variant="ghost"
-            size="sm"
-          />
-          <MenuList>
-            <MenuItem onClick={handleRename}>Rename</MenuItem>
-            <MenuItem onClick={handleProperties}>View Properties</MenuItem>
-            <MenuItem onClick={handleDelete} color="red.500">
-              Delete
-            </MenuItem>
-          </MenuList>
-        </Menu>
-      </Flex>
+  const MenuOptions = () => (
+    <MenuList>
+      <MenuItem onClick={handleRename}>Rename</MenuItem>
+      <MenuItem onClick={handleProperties}>View Properties</MenuItem>
+      <MenuItem onClick={handleShareModal} icon={<FaShareAlt />}>
+        Share
+      </MenuItem>
+      <MenuItem onClick={handleDelete} color="red.500">
+        Delete
+      </MenuItem>
+    </MenuList>
+  )
 
-      {/* Preview Area */}
+  const ShareModal = () => (
+    <Modal isOpen={isOpen} onClose={onClose}>
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader>Share File</ModalHeader>
+        <ModalCloseButton />
+        <ModalBody>
+          <Text fontWeight="bold" mb={1}>Public Link</Text>
+          <Input value={file.url} isReadOnly mb={3} />
+  
+          <Button colorScheme="teal" size="sm" onClick={handleCopyLink} mb={4}>
+            Copy Link
+          </Button>
+  
+          <Text fontWeight="bold" mb={2}>QR Code</Text>
+          <Flex justify="center">
+            <QRCodeSVG value={file.url} size={128} />
+          </Flex>
+        </ModalBody>
+        <ModalFooter>
+          <Button variant="ghost" onClick={onClose}>
+            Close
+          </Button>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
+  )
+
+  if (view === "grid") {
+    return (
       <Box
-        h="140px"
-        bg="gray.100"
-        display="flex"
-        alignItems="center"
-        justifyContent="center"
+        bg={bgColor}
+        border="1px"
+        borderColor={borderColor}
+        borderRadius="md"
+        shadow="sm"
+        w="220px"
         overflow="hidden"
       >
-        <Link href={file.url} isExternal>
-          {isImage ? (
-            <Image
-              src={file.url}
-              alt={file.name}
-              objectFit="cover"
-              h="100%"
-              w="100%"
-            />
-          ) : isVideo ? (
-            <video
-              src={file.url}
-              muted
-              autoPlay
-              loop
-              playsInline
-              style={{ width: "100%", height: "100%", objectFit: "cover" }}
-            />
-          ) : isPdf ? (
-            <embed
-              src={`${file.url}#toolbar=0&navpanes=0&scrollbar=0`}
-              type="application/pdf"
-              style={{ width: "100%", height: "100%" }}
-            />
-          ) : (
-            <Icon as={FaFile} boxSize={10} color={fileIconColor} />
-          )}
-        </Link>
+        <Flex align="center" px={2} py={1} justify="space-between" gap={2}>
+          <Icon
+            as={
+              isPdf ? FaFilePdf : isVideo ? FaFileVideo : isImage ? FaFile : FaFile
+            }
+            boxSize={5}
+            color={fileIconColor}
+          />
+          <Text
+            flex="1"
+            fontSize="sm"
+            fontWeight="medium"
+            color={linkColor}
+            noOfLines={1}
+            textAlign="center"
+          >
+            {file.name}
+          </Text>
+          <Menu>
+            <MenuButton as={IconButton} icon={<FaEllipsisV />} variant="ghost" size="sm" />
+            {MenuOptions()}
+          </Menu>
+        </Flex>
+
+        <Box
+          h="140px"
+          bg="gray.100"
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          overflow="hidden"
+        >
+          <Link href={file.url} isExternal>
+            {isImage ? (
+              <Image src={file.url} alt={file.name} objectFit="cover" h="100%" w="100%" />
+            ) : isVideo ? (
+              <video
+                src={file.url}
+                muted
+                autoPlay
+                loop
+                playsInline
+                style={{ width: "100%", height: "100%", objectFit: "cover" }}
+              />
+            ) : isPdf ? (
+              <embed
+                src={`${file.url}#toolbar=0&navpanes=0&scrollbar=0`}
+                type="application/pdf"
+                style={{ width: "100%", height: "100%" }}
+              />
+            ) : (
+              <Icon as={FaFile} boxSize={10} color={fileIconColor} />
+            )}
+          </Link>
+        </Box>
+
+        <ShareModal />
       </Box>
-    </Box>
-  )
-}
+    )
+  }
 
-
-  // List view
   return (
     <Flex
       align="center"
@@ -210,7 +266,6 @@ Size: ${formatSize(file.size)}`,
       minW="0"
       mb={2}
     >
-      {/* Name & Icon */}
       <Flex align="center" flex="2" gap={2} minW={0}>
         {isImage ? (
           <Image
@@ -242,17 +297,13 @@ Size: ${formatSize(file.size)}`,
         </Link>
       </Flex>
 
-      {/* Modified Date */}
       <Text flex="1" fontSize="sm" color="gray.500" isTruncated>
         {formatDate(file.createdAt)}
       </Text>
-
-      {/* Size */}
       <Text flex="1" fontSize="sm" color="gray.500" isTruncated>
         {formatSize(file.size)}
       </Text>
 
-      {/* Actions */}
       <Box>
         <Menu>
           <MenuButton
@@ -261,15 +312,11 @@ Size: ${formatSize(file.size)}`,
             variant="ghost"
             size="sm"
           />
-          <MenuList>
-            <MenuItem onClick={handleRename}>Rename</MenuItem>
-            <MenuItem onClick={handleProperties}>View Properties</MenuItem>
-            <MenuItem onClick={handleDelete} color="red.500">
-              Delete
-            </MenuItem>
-          </MenuList>
+          {MenuOptions()}
         </Menu>
       </Box>
+
+      <ShareModal />
     </Flex>
   )
 }
