@@ -1,5 +1,6 @@
 // src/App.js
 
+import React, { useState } from "react"
 import Signup from "./authentication/Signup"
 import { AuthProvider } from "../contexts/AuthContext"
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom"
@@ -14,7 +15,7 @@ import "react-toastify/dist/ReactToastify.css"
 import { ChakraProvider, Flex, Box } from "@chakra-ui/react"
 import Sidebar from "./Sidebar"
 import Navbar from "./google-drive/Navbar"
-import React, { useState } from "react"
+import PdfSummarizer from "../components/PdfSummarizer"
 
 import "./App.css"
 
@@ -37,23 +38,35 @@ function App() {
                 <Flex>
                   <Sidebar usedStorage={5} totalStorage={15} />
                   <Box ml="250px" w="100%">
-                    {/* Pass search query state to Navbar */}
-                    <Navbar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+                    <Navbar
+                      searchQuery={searchQuery}
+                      setSearchQuery={setSearchQuery}
+                    />
 
                     <Switch>
-                      {/* Pass searchQuery via render to Dashboard */}
                       <PrivateRoute
                         exact
                         path="/"
-                        render={(props) => <Dashboard {...props} searchQuery={searchQuery} />}
+                        render={(props) => (
+                          <Dashboard {...props} searchQuery={searchQuery} />
+                        )}
                       />
                       <PrivateRoute
                         exact
                         path="/folder/:folderId"
-                        render={(props) => <Dashboard {...props} searchQuery={searchQuery} />}
+                        render={(props) => (
+                          <Dashboard {...props} searchQuery={searchQuery} />
+                        )}
                       />
                       <PrivateRoute path="/user" component={Profile} />
-                      <PrivateRoute path="/update-profile" component={UpdateProfile} />
+                      <PrivateRoute
+                        path="/update-profile"
+                        component={UpdateProfile}
+                      />
+                      <PrivateRoute
+                        path="/summarize"
+                        component={PdfSummarizer}
+                      />
                     </Switch>
                   </Box>
                 </Flex>

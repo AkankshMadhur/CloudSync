@@ -11,7 +11,7 @@ import {
   Icon,
 } from "@chakra-ui/react"
 import { Link as RouterLink } from "react-router-dom"
-import { FaHome, FaClock, FaDatabase } from "react-icons/fa"
+import { FaHome, FaClock, FaDatabase, FaFileAlt } from "react-icons/fa" // Added FaFileAlt icon
 
 export default function Sidebar({ usedStorage, totalStorage }) {
   const bg = useColorModeValue("gray.50", "gray.800")
@@ -68,6 +68,17 @@ export default function Sidebar({ usedStorage, totalStorage }) {
             colorScheme="teal"
           >
             Storage
+          </Button>
+          {/* New Summarize PDF Option */}
+          <Button
+            as={RouterLink}
+            to="/summarize"
+            leftIcon={<Icon as={FaFileAlt} />}
+            justifyContent="flex-start"
+            variant="ghost"
+            colorScheme="teal"
+          >
+            Summarize PDF
           </Button>
         </VStack>
 
