@@ -52,16 +52,7 @@ export default function Sidebar({ usedStorage, totalStorage }) {
             Home
           </Button>
           
-          <Button
-            as={RouterLink}
-            to="/storage"
-            leftIcon={<Icon as={FaDatabase} />}
-            justifyContent="flex-start"
-            variant="ghost"
-            colorScheme="teal"
-          >
-            Storage
-          </Button>
+          
           {/* New Summarize PDF Option */}
           <Button
             as={RouterLink}
@@ -83,6 +74,18 @@ export default function Sidebar({ usedStorage, totalStorage }) {
 >
   Image to PDF
 </Button>
+
+<Button
+            as={RouterLink}
+            to="/storage"
+            leftIcon={<Icon as={FaDatabase} />}
+            justifyContent="flex-start"
+            variant="ghost"
+            colorScheme="teal"
+          >
+            Storage
+          </Button>
+          
         </VStack>
 
         <Divider />
@@ -90,7 +93,7 @@ export default function Sidebar({ usedStorage, totalStorage }) {
         {/* Storage Info */}
         <Box>
           <Text fontSize="sm" mb={1}>
-            {usedStorage} GB of {totalStorage} GB used
+            {usedStorage.toFixed(2)} GB of {totalStorage} GB used
           </Text>
           <Progress
             value={storagePercent}
