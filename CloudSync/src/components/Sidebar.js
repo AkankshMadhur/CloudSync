@@ -51,6 +51,17 @@ export default function Sidebar({ usedStorage, totalStorage }) {
           >
             Home
           </Button>
+
+          <Button
+            as={RouterLink}
+            to="/recent"
+            leftIcon={<Icon as={FaClock} />}
+            justifyContent="flex-start"
+            variant="ghost"
+             colorScheme="teal"
+           >
+  Recent
+</Button>
           
           
           {/* New Summarize PDF Option */}
@@ -85,7 +96,7 @@ export default function Sidebar({ usedStorage, totalStorage }) {
           >
             Storage
           </Button>
-          
+
         </VStack>
 
         <Divider />

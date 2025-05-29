@@ -19,6 +19,7 @@ import Navbar from "./google-drive/Navbar"
 import PdfSummarizer from "../components/PdfSummarizer"
 import ImageToPdf from "../components/ImageToPdf"
 import StorageView from "./google-drive/StorageView"
+import RecentView from "./google-drive/RecentView"
 
 import "./App.css"
 
@@ -80,6 +81,7 @@ function AppContent() {
             )}
           />
           <PrivateRoute path="/user" component={Profile} />
+          <PrivateRoute path="/recent" component={RecentView} />
           <PrivateRoute path="/update-profile" component={UpdateProfile} />
           <PrivateRoute path="/summarize" component={PdfSummarizer} />
           <PrivateRoute path="/image-to-pdf" component={ImageToPdf} />
