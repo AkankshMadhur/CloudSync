@@ -1,4 +1,6 @@
 // src/Sidebar.js
+
+
 import React from "react"
 import {
   Box,
@@ -11,7 +13,7 @@ import {
   Icon,
 } from "@chakra-ui/react"
 import { Link as RouterLink } from "react-router-dom"
-import { FaHome, FaClock, FaDatabase, FaFileAlt } from "react-icons/fa" // Added FaFileAlt icon
+import { FaImage, FaHome, FaClock, FaDatabase, FaFileAlt } from "react-icons/fa" // Added FaFileAlt icon
 
 export default function Sidebar({ usedStorage, totalStorage }) {
   const bg = useColorModeValue("gray.50", "gray.800")
@@ -80,6 +82,16 @@ export default function Sidebar({ usedStorage, totalStorage }) {
           >
             Summarize PDF
           </Button>
+          <Button
+  as={RouterLink}
+  to="/image-to-pdf"
+  leftIcon={<Icon as={FaImage} />}
+  justifyContent="flex-start"
+  variant="ghost"
+  colorScheme="teal"
+>
+  Image to PDF
+</Button>
         </VStack>
 
         <Divider />
