@@ -1,11 +1,24 @@
- //src/components/authentication/Login.js
+// src/components/authentication/Login.js
 
 import React, { useRef, useState } from "react";
-import { Form, Button, Card, Alert, Container } from "react-bootstrap";
-import { useAuth } from "../../contexts/AuthContext";
+import {
+  Box,
+  Button,
+  Container,
+  FormControl,
+  FormLabel,
+  Input,
+  Heading,
+  Text,
+  Link as ChakraLink,
+  VStack,
+  Alert,
+  AlertIcon,
+  useColorModeValue,
+} from "@chakra-ui/react";
 import { Link, useHistory } from "react-router-dom";
-import { toast } from "react-toastify"
-
+import { useAuth } from "../../contexts/AuthContext";
+import { toast } from "react-toastify";
 
 export default function Login() {
   const emailRef = useRef();
@@ -17,68 +30,88 @@ export default function Login() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-  
     try {
       setError("");
       setLoading(true);
       await login(emailRef.current.value, passwordRef.current.value);
-  
-      toast.success("Logged in successfully!"); // ✅ Toast on success
+      toast.success("Logged in successfully!");
       history.push("/");
     } catch {
       setError("Failed to log in");
-      toast.error("Login failed. Please check your credentials."); // ✅ Toast on failure
+      toast.error("Login failed. Please check your credentials.");
     }
-  
     setLoading(false);
   }
-  
 
   return (
-    <Container
-      className="d-flex align-items-center justify-content-center"
-      style={{ minHeight: "100vh", backgroundColor: "#fff" }}
-    >
-      <div className="w-100" style={{ maxWidth: "400px" }}>
-        {/* Title */}
-        <h1
-          className="text-center mb-4"
-          style={{
-            color: "#007bff",
-            fontWeight: "bold",
-            fontSize: "2.5rem",
-            letterSpacing: "1px",
-          }}
+    <Container maxW="md" centerContent py={12}>
+      <VStack spacing={6} w="100%">
+        <Heading
+          size="2xl"
+          fontWeight="bold"
+          color="#319795"
+          letterSpacing="1px"
+          textAlign="center"
         >
           CloudSync
-        </h1>
+        </Heading>
 
-        <Card>
-          <Card.Body>
-            <h2 className="text-center mb-4">Log In</h2>
-            {error && <Alert variant="danger">{error}</Alert>}
-            <Form onSubmit={handleSubmit}>
-              <Form.Group id="email">
-                <Form.Label>Email</Form.Label>
-                <Form.Control type="email" ref={emailRef} required />
-              </Form.Group>
-              <Form.Group id="password" className="mt-2">
-                <Form.Label>Password</Form.Label>
-                <Form.Control type="password" ref={passwordRef} required />
-              </Form.Group>
-              <Button disabled={loading} className="w-100 mt-4" type="submit">
-                Log In
-              </Button>
-            </Form>
-            <div className="w-100 text-center mt-3">
-              <Link to="/forgot-password">Forgot Password?</Link>
-            </div>
-          </Card.Body>
-        </Card>
-        <div className="w-100 text-center mt-2">
-          Need an account? <Link to="/signup">Sign Up</Link>
-        </div>
-      </div>
+        <Box
+          as="form"
+          onSubmit={handleSubmit}
+          bg={useColorModeValue("white", "gray.800")}
+          p={8}
+          rounded="lg"
+          boxShadow="lg"
+          w="100%"
+        >
+          <VStack spacing={4} align="stretch">
+            <Heading size="md" textAlign="center">
+              Log In
+            </Heading>
+
+            {error && (
+              <Alert status="error" borderRadius="md">
+                <AlertIcon />
+                {error}
+              </Alert>
+            )}
+
+            <FormControl isRequired>
+              <FormLabel>Email</FormLabel>
+              <Input type="email" ref={emailRef} />
+            </FormControl>
+
+            <FormControl isRequired>
+              <FormLabel>Password</FormLabel>
+              <Input type="password" ref={passwordRef} />
+            </FormControl>
+
+            <Button
+              type="submit"
+              colorScheme="teal"
+              w="100%"
+              isLoading={loading}
+              mt={2}
+            >
+              Log In
+            </Button>
+
+            <Text textAlign="center" mt={2}>
+              <ChakraLink as={Link} to="/forgot-password" color="teal.500">
+                Forgot Password?
+              </ChakraLink>
+            </Text>
+          </VStack>
+        </Box>
+
+        <Text>
+          Need an account?{" "}
+          <ChakraLink as={Link} to="/signup" color="teal.500">
+            Sign Up
+          </ChakraLink>
+        </Text>
+      </VStack>
     </Container>
   );
 }

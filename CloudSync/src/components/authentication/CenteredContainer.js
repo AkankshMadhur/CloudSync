@@ -1,15 +1,21 @@
-import React from "react"
-import { Container } from "react-bootstrap"
+// src/components/authentication/CenteredContainer.js
+import { Box, useColorModeValue } from "@chakra-ui/react";
+import React from "react";
+
 
 export default function CenteredContainer({ children }) {
   return (
-    <Container
-      className="d-flex align-items-center justify-content-center"
-      style={{ minHeight: "100vh" }}
+    <Box
+      minH="100vh"
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+      bg={useColorModeValue("gray.100", "gray.900")}
+      px={4}
     >
-      <div className="w-100" style={{ maxWidth: "400px" }}>
+      <Box w="100%" maxW="400px">
         {children}
-      </div>
-    </Container>
-  )
+      </Box>
+    </Box>
+  );
 }
