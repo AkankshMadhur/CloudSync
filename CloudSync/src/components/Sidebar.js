@@ -64,7 +64,7 @@ export default function Sidebar({ usedStorage, totalStorage }) {
 </Button>
           
           
-          {/* New Summarize PDF Option */}
+          
           <Button
             as={RouterLink}
             to="/summarize"
@@ -112,9 +112,18 @@ export default function Sidebar({ usedStorage, totalStorage }) {
             colorScheme="teal"
             borderRadius="md"
           />
-          <Button mt={2} size="sm" colorScheme="teal" variant="outline" width="100%">
-            Get more storage
-          </Button>
+         <Button
+  as={RouterLink}
+  to="/billing"
+  mt={2}
+  size="sm"
+  colorScheme="teal"
+  variant="outline"
+  width="100%"
+>
+  Get more storage
+</Button>
+
         </Box>
       </VStack>
     </Box>

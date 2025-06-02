@@ -1,8 +1,8 @@
 // src/App.js
-
+import BillingPage from "./google-drive/BillingPage"
 import React, { useState, useEffect } from "react"
 import Signup from "./authentication/Signup"
-import { database } from "../firebase" // ✅ Correct import
+import { database } from "../firebase" 
 import { useAuth, AuthProvider } from "../contexts/AuthContext"
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom"
 import Profile from "./authentication/Profile"
@@ -62,6 +62,7 @@ function AppContent() {
               <Dashboard {...props} searchQuery={searchQuery} />
             )}
           />
+          <PrivateRoute path="/billing" component={BillingPage} />
 
           <PrivateRoute
             path="/storage"

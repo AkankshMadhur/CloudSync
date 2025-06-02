@@ -3,6 +3,7 @@ import "firebase/auth"
 import "firebase/firestore"
 import "firebase/storage"
 
+
 const app = firebase.initializeApp({
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
   authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
@@ -19,6 +20,7 @@ export const db = firestore  // <--- Add this export
 export const database = {
   folders: firestore.collection("folders"),
   files: firestore.collection("files"),
+  users: firestore.collection("users"),
   formatDoc: doc => {
     return { id: doc.id, ...doc.data() }
   },
